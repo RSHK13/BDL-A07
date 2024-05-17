@@ -1,0 +1,12 @@
+# sys
+# time
+typing 
+fastapi 
+prometheus_client 
+python-multipart
+prometheus_fastapi_instrumentator
+numpy
+psutil
+# keras.models
+opencv-python
+uvicorn
