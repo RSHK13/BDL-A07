@@ -5,7 +5,7 @@ from fastapi import FastAPI, UploadFile, File, Request
 from prometheus_client import Counter, Gauge
 from prometheus_fastapi_instrumentator import Instrumentator
 import numpy as np
-# from keras.models import load_model
+from keras.models import load_model
 import cv2
 import uvicorn
 import psutil
@@ -47,9 +47,9 @@ def format_image(contents: bytes) -> np.ndarray:
     return formatted_image
 
 # Function to predict digit from the image data
-def predict_digit(data_point: np.ndarray) -> str:
+def predict_digit(model, data_point: np.ndarray) -> str:
     # Predict the digit
-    prediction = 1
+    prediction = np.argmax(model.predict(data_point))
     return str(prediction)
 
 # API endpoint for digit prediction
@@ -69,8 +69,8 @@ async def predict(request: Request, file: UploadFile = File(...)):
     network_bytes_sent.set(network_io_counters.bytes_sent)
     network_bytes_revc.set(network_io_counters.bytes_recv)
     # Load the model
-    # model_path = sys.argv[1]
-    # model = load_model(model_path)
+    model_path = sys.argv[1]
+    model = load_model(model_path)
 
     # Read the uploaded image file as bytes
     contents = await file.read()
@@ -78,7 +78,7 @@ async def predict(request: Request, file: UploadFile = File(...)):
     formatted_image = format_image(contents)
 
     # Predict the digit
-    digit = predict_digit(formatted_image)
+    digit = predict_digit(model, formatted_image)
 
     end_time = time.time()
     total_time = (end_time - start_time) * 1000  # in milliseconds

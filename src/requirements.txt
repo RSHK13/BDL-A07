@@ -7,6 +7,6 @@ python-multipart
 prometheus_fastapi_instrumentator
 numpy
 psutil
-# keras.models
+keras.models
 opencv-python
 uvicorn
